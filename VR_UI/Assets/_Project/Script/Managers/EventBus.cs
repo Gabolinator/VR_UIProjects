@@ -9,17 +9,17 @@ public class EventBus : MonoBehaviour
 {
     #region Player
 
-    public static Action<PlayerController> OnPlayerStart;
+    public static Action<PlayerController> OnPlayerStart { get; set; }
 
     #region LocomotionEvent
 
-    public static Action<InputAction.CallbackContext> OnLeftControllerInput;
-    public static Action<InputAction.CallbackContext> OnRightControllerInput;
-    public static Action<bool> OnPlayerMoving;
+    public static Action<InputAction.CallbackContext> OnLeftControllerInput { get; set; }
+    public static Action<InputAction.CallbackContext> OnRightControllerInput { get; set; }
+    public static Action<bool> OnPlayerMoving { get; set; }
 
-    public static Action<bool> OnPlayerStoppedMoving;
+    public static Action<bool> OnPlayerStoppedMoving { get; set; }
 
-    public static Action<float> OnPlayerMovementSpeedChange;
+    public static Action<float> OnPlayerMovementSpeedChange { get; set; }
 
     #endregion
 
@@ -35,10 +35,10 @@ public class EventBus : MonoBehaviour
 
     #region GrabEvents
 
-    public static Action<SelectEnterEventArgs> OnObjectGrabbed;
-    public static Action<SelectExitEventArgs> OnObjectReleased;
-    public static Action<XRGrabInteractable> OnGrabbableProcess; // i.e. scaling
-    public static Action<bool, XRGrabInteractable> OnDoubleGrab;
+    public static Action<SelectEnterEventArgs> OnObjectGrabbed { get; set; }
+    public static Action<SelectExitEventArgs> OnObjectReleased { get; set; }
+    public static Action<XRGrabInteractable> OnGrabbableProcess { get; set; }// i.e. scaling
+    public static Action<bool, XRGrabInteractable> OnDoubleGrab { get; set; }
    
 
 
@@ -47,12 +47,17 @@ public class EventBus : MonoBehaviour
     
     #region GUIEvents
 
-    public static Action OnToggleMainMenu;
+    public static Action OnToggleMainMenu { get; set; }
 
-    public static Action<bool> OnPointingGui;
+    public static Action<bool> OnPointingGui { get; set; }
+
+    public static Action<SelectEnterEventArgs, XRRayInteractor> OnSelectEnter { get; set; }
+    public static Action<SelectExitEventArgs, XRRayInteractor> OnSelectExit { get; set; }
+    public static Action<HoverEnterEventArgs, XRRayInteractor> OnHoverEnter { get; set; }
+    public static Action<HoverExitEventArgs, XRRayInteractor> OnHoverExit { get; set; }
     
     #endregion
 
     public static Action OnObjectSpawnInput;
-
+    
 }

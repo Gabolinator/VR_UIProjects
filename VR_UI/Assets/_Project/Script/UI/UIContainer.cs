@@ -393,6 +393,7 @@ namespace UI
         public IUIKeyboardService KeyboardService { get; set; }
         public IUIPanel SelectedUIPanel { get; }
         public int SelectedIndex { get; }
+        public Action<IUIPanelInteractable<Selectable>> OnSelectedPanel { get; set; }
         public IInteractableService<Selectable> InteractableService { get; set; } = new UIInteractableService();
         public bool IsInteractable { get; set; }
         public bool AllowChildInteractability { get; set; }
