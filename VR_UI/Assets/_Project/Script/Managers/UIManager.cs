@@ -17,7 +17,6 @@ namespace _Project.Script.Managers
 
         public static UIManager Instance => _instance;
 
-
         public void Register(IUIPanel panel)
         {
             if(panel == null) return;

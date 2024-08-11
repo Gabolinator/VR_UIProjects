@@ -29,7 +29,6 @@ namespace UI.Interface
         public LayoutPreference LayoutPreferences { get; set; }
         public void UpdateLayout();
         public void Layout(LayoutPreference preference);
-        
         public IUILayoutService LayoutService { get; set; }
     }
     

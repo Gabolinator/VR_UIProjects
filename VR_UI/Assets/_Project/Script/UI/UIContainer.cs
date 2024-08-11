@@ -13,7 +13,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class UIContainer : MonoBehaviour,IUIContainer, IUIPanel, IUIPanelBehaviour, IUIPanelVisibility<Canvas, SortingGroup, CanvasGroup, Image>, IUIKeyboardSupport
+    public class UIContainer : MonoBehaviour,IUIContainer, IUIPanel, IUIPanelBehaviour, IUIPanelVisibility<Canvas, SortingGroup, CanvasGroup, Image>, IUIKeyboardSupport, IUIChildInteractable<Selectable>
     {
         [SerializeField] private string name; 
         [FoldoutGroup("Container Preferences")][SerializeField] private IUIVisualService<Canvas, SortingGroup, CanvasGroup, Image>.VisualPreferences visualPreference;
@@ -391,5 +391,16 @@ namespace UI
 
         public IUIKeyboardService.UIKeyboardPreference UIKeyboardPreferences { get; set; }
         public IUIKeyboardService KeyboardService { get; set; }
+        public IUIPanel SelectedUIPanel { get; }
+        public int SelectedIndex { get; }
+        public IInteractableService<Selectable> InteractableService { get; set; } = new UIInteractableService();
+        public bool IsInteractable { get; set; }
+        public bool AllowChildInteractability { get; set; }
+        public void SetInteractable(bool interactable)
+        {
+            throw new NotImplementedException();
+        }
     }
+
+
 }

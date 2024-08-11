@@ -18,13 +18,9 @@ namespace UI.Interface
     [Serializable]
     public class CarrouselLayoutPreferences : LayoutPreference
     {
-        
-        
         public int frontIndex; // central ui index
-        //public int indexToShow=1; //showing index on each side of the central index
         public float startOffset; //add an offset to the circle 
         public float radius = 1; //radius of carrousel
-        //public float neighbourGuiAlpha = .3f; //alpha ui on each side of central index
         public Axis axis = Axis.Side; //avis around with the caroussel will be layed out
         [ReadOnly] public float destinationAngle;
         [ReadOnly] public float currentAngle;
@@ -32,7 +28,6 @@ namespace UI.Interface
 
     public class UICarrouselLayoutService : IUILayoutService
     {
-
         private float _anglesPerPanel;
         private float _startOffset;
         private float _currentAngle;

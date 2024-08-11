@@ -10,133 +10,135 @@ namespace UI
     {
 
         [SerializeField] private CarrouselLayoutPreferences _layoutPreferences;
-
-
-        public void Layout(LayoutPreference preference) => LayoutService.Layout(preference);
-        
-
-        public IUILayoutService LayoutService { get; set; } = new UICarrouselLayoutService();
-   
-   
-    public int CurrentIndex => LayoutService.CurrentIndex;
-    public int NextIndex => GetNextIndex();
-
-    private int GetNextIndex()
-    {
-        var index = CurrentIndex + 1;
-        int wrappedIndex = (index + NumOfPanels) % NumOfPanels;
-        
-        return wrappedIndex;
-    }
-
-    public int PreviousIndex => GetPreviousIndex();
-
-    private int GetPreviousIndex()
-    {
-        var index = CurrentIndex - 1;
-        int wrappedIndex = (index + NumOfPanels) % NumOfPanels;
-        return wrappedIndex;
-    }
-
-    protected override void OnInitialize()
-    {
-        LayoutService.OnFinishLayout += OnChangeCurrentIndex;
-        LayoutService.OnLayoutUpdate += LayoutUpdated;
-       LayoutService.Initialize(_layoutPreferences, panels.ConvertAll<IUIPanel>(panel => panel));
+        [SerializeField] private float _centralPanelAlpha = 1f;
+        [SerializeField] private float _neighbouringPanelAlpha = .4f;
+        [SerializeField] private float _otherPanelAlpha = 0f;
+        [SerializeField] private int _adjustNeighbouringPanelAlphaIndex = 1;
+        [SerializeField] private int _adjustNeighbouringPanelInteractableIndex = 0;
        
-    }
+        public void Layout(LayoutPreference preference) => LayoutService.Layout(preference);
+        public IUILayoutService LayoutService { get; set; } = new UICarrouselLayoutService();
 
-    private void LayoutUpdated(float angle, int index)
-    {
-        SetPanelsVisibility(index, 1);
-        SetPanelsInteractability(index, 1);
-    }
+        public IUIPanel SelectedUIPanel => GetUIPanelByIndex(SelectedIndex);
+        public int SelectedIndex => LayoutService.CurrentIndex;
+        public int NextIndex => GetNextIndex();
 
-    private void SetPanelsInteractability(int centralIndex, int indexOnSideOfCentral)
-    {
-        List<int> interactableIndex = new List<int>();
-        if (indexOnSideOfCentral < 0)
+        private int GetNextIndex()
         {
-           interactableIndex = Enumerable.Range(0, NumOfPanels).ToList();
-        }
-
-
-        // Calculate the range of indices that should be interactable
-       else 
-            for (int offset = -indexOnSideOfCentral; offset <= indexOnSideOfCentral; offset++)
-            {
-                int index = (centralIndex + offset + NumOfPanels) % NumOfPanels;
-                interactableIndex.Add(index);
-            }
-        
-  
-        for (int i = 0; i < NumOfPanels; i++)
-        {
-            var panel = GetUIPanelByIndex(i);
-            if(!panel) continue;
-            bool interactable = interactableIndex.Contains(i) && panel.Visible;
+            var index = SelectedIndex + 1;
+            int wrappedIndex = (index + NumOfPanels) % NumOfPanels;
             
-            panel.SetInteractable(interactable);
+            return wrappedIndex;
         }
-        
-    }
-    private void SetPanelsVisibility(int centralIndex, int indexOnSideOfCentral)
-    {
-        List<int> indexToShow = new List<int>();
-        
-        if (indexOnSideOfCentral < 0)
+
+        public int PreviousIndex => GetPreviousIndex();
+
+        private int GetPreviousIndex()
         {
-            indexToShow = Enumerable.Range(0, NumOfPanels).ToList();
+            var index = SelectedIndex - 1;
+            int wrappedIndex = (index + NumOfPanels) % NumOfPanels;
+            return wrappedIndex;
         }
-        // Calculate the range of indices that should have partial visibility
-        else for (int offset = -indexOnSideOfCentral; offset <= indexOnSideOfCentral; offset++)
+
+        protected override void OnInitialize()
+        {
+            LayoutService.OnFinishLayout += OnChangeCurrentIndex;
+            LayoutService.OnLayoutUpdate += LayoutUpdated; 
+            LayoutService.Initialize(_layoutPreferences, panels.ConvertAll<IUIPanel>(panel => panel));
+            LayoutUpdated(0f, SelectedIndex);
+        }
+
+        private void LayoutUpdated(float angle, int index)
+        {
+            SetPanelsVisibility(index, _adjustNeighbouringPanelAlphaIndex, _centralPanelAlpha, _neighbouringPanelAlpha, _otherPanelAlpha);
+            SetPanelsInteractability(index, _adjustNeighbouringPanelInteractableIndex);
+        }
+
+        private void SetPanelsInteractability(int centralIndex, int indexOnSideOfCentral)
+        {
+            List<int> interactableIndex = new List<int>();
+            if (indexOnSideOfCentral < 0)
             {
-                int index = (centralIndex + offset + NumOfPanels) % NumOfPanels;
-                indexToShow.Add(index);
+               interactableIndex = Enumerable.Range(0, NumOfPanels).ToList();
             }
-        
-  
-        for (int i = 0; i < NumOfPanels; i++)
-        {
-            var panel = GetUIPanelByIndex(i);
-            if(!panel) continue;
-            float alpha = 0f;
-          
-            if (indexToShow.Contains(i)) alpha = i == centralIndex ? 1f : .2f;
+
+
+            // Calculate the range of indices that should be interactable
+           else 
+                for (int offset = -indexOnSideOfCentral; offset <= indexOnSideOfCentral; offset++)
+                {
+                    int index = (centralIndex + offset + NumOfPanels) % NumOfPanels;
+                    interactableIndex.Add(index);
+                }
             
-            panel.SetAlpha(alpha,true, .2f);
-        
+      
+            for (int i = 0; i < NumOfPanels; i++)
+            {
+                var panel = GetUIPanelByIndex(i);
+                if(!panel) continue;
+                bool interactable = interactableIndex.Contains(i) && panel.Visible;
+                
+                panel.SetInteractable(interactable);
+            }
+            
         }
+        private void SetPanelsVisibility(int centralIndex, int indexOnSideOfCentral , float centralAlpha, float neighbouringAlpha, float otherAlpha)
+        {
+            List<int> indexToShow = new List<int>();
+            
+            if (indexOnSideOfCentral < 0)
+            {
+                indexToShow = Enumerable.Range(0, NumOfPanels).ToList();
+            }
+            // Calculate the range of indices that should have partial visibility
+            else for (int offset = -indexOnSideOfCentral; offset <= indexOnSideOfCentral; offset++)
+                {
+                    int index = (centralIndex + offset + NumOfPanels) % NumOfPanels;
+                    indexToShow.Add(index);
+                }
+            
+      
+            for (int i = 0; i < NumOfPanels; i++)
+            {
+                var panel = GetUIPanelByIndex(i);
+                if(!panel) continue;
+                float alpha = otherAlpha;
+
+                if (indexToShow.Contains(i)) alpha = i == centralIndex ? centralAlpha : neighbouringAlpha;
+                
+                panel.SetAlpha(alpha,true, .2f);
+            
+            }
+            
+        }
+
+
+        private void OnValidate()
+        {
+            UpdateLayout();
+        }
+
+        public LayoutPreference LayoutPreferences { get => _layoutPreferences; set => _layoutPreferences = value as CarrouselLayoutPreferences; }
+        public void UpdateLayout() => Layout(_layoutPreferences);
         
-    }
+        public void ToNextPanel() => LayoutService.Layout(NextIndex);
+        public void ToPreviousPanel() => LayoutService.Layout(PreviousIndex);
+        public void ToPanel(int index) => LayoutService.Layout(index);
+        public void ToPanel(UIPanel panel) => ToPanel(GetUIPanelIndex(panel));
+
+        
+        public void OnChangeCurrentIndex(int index){
+            Debug.Log($"Current Index : {index}");
+        }
 
 
-    private void OnValidate()
-    {
-        UpdateLayout();
-    }
+        public void CloseCurrentPanel() => ClosePanel(GetUIPanelByIndex(SelectedIndex));
 
-    public LayoutPreference LayoutPreferences { get => _layoutPreferences; set => _layoutPreferences = value as CarrouselLayoutPreferences; }
-    public void UpdateLayout() => Layout(_layoutPreferences);
-    
-    public void ToNextPanel() => LayoutService.Layout(NextIndex);
-    public void ToPreviousPanel() => LayoutService.Layout(PreviousIndex);
-    public void ToPanel(int index) => LayoutService.Layout(index);
-    public void ToPanel(UIPanel panel) => ToPanel(GetUIPanelIndex(panel));
-
-    
-    public void OnChangeCurrentIndex(int index){
-        Debug.Log($"Current Index : {index}");
-    }
-
-
-    public void CloseCurrentPanel() => ClosePanel(GetUIPanelByIndex(CurrentIndex));
-
-    protected override void OnClosePanel()
-    {
-        LayoutService.Initialize(_layoutPreferences, panels.ConvertAll<IUIPanel>(panel => panel));
-    }
-    }
+        protected override void OnClosePanel()
+        {
+            LayoutService.Initialize(_layoutPreferences, panels.ConvertAll<IUIPanel>(panel => panel));
+        }
+        }
 
 }
 
