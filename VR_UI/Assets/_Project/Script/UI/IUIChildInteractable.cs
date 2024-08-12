@@ -9,7 +9,7 @@ namespace UI
         public int SelectedIndex { get; }
 
         public Action<IUIPanelInteractable<TInteractable>> OnSelectedPanel { get; set; }
-        public IInteractableService<TInteractable> InteractableService { get; set; }
+        public IInteractableService<IUIPanelInteractable<TInteractable>,TInteractable> InteractableService { get; set; }
         bool IsInteractable { get; set; }
         bool AllowChildInteractability { get; set; }
         public void SetInteractable(bool interactable);

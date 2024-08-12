@@ -211,10 +211,10 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        InteractorRay.uiHoverEntered.AddListener(OnPointingGui);
-        InteractorRay.uiHoverExited.AddListener(OnStoppedPointingGui);
-        InteractorRay.hoverEntered.AddListener(OnPointingObject);
-        InteractorRay.hoverExited.AddListener(OnStoppedPointingObject);
+        // InteractorRay.uiHoverEntered.AddListener(OnPointingGui);
+        // InteractorRay.uiHoverExited.AddListener(OnStoppedPointingGui);
+        // InteractorRay.hoverEntered.AddListener(OnPointingObject);
+        // InteractorRay.hoverExited.AddListener(OnStoppedPointingObject);
     }
 
  
@@ -228,9 +228,9 @@ public class PlayerController : MonoBehaviour
             Debug.Log("[Player] No interactor ray set");
             return;
         }
-        InteractorRay.uiHoverEntered.RemoveListener(OnPointingGui);
-        InteractorRay.uiHoverExited.RemoveListener(OnStoppedPointingGui);
-        InteractorRay.hoverEntered.RemoveListener(OnPointingObject);
-        InteractorRay.hoverExited.RemoveListener(OnStoppedPointingObject);
+        // InteractorRay.uiHoverEntered.RemoveListener(OnPointingGui);
+        // InteractorRay.uiHoverExited.RemoveListener(OnStoppedPointingGui);
+        // InteractorRay.hoverEntered.RemoveListener(OnPointingObject);
+        // InteractorRay.hoverExited.RemoveListener(OnStoppedPointingObject);
     }
 }

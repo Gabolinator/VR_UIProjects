@@ -10,10 +10,11 @@ using UnityEngine.Events;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit;
 
 namespace UI
 {
-    public class UIContainer : MonoBehaviour,IUIContainer, IUIPanel, IUIPanelBehaviour, IUIPanelVisibility<Canvas, SortingGroup, CanvasGroup, Image>, IUIKeyboardSupport, IUIChildInteractable<Selectable>
+    public class UIContainer : MonoBehaviour,IUIContainer, IUIPanel, IUIPanelBehaviour, IUIPanelVisibility<Canvas, SortingGroup, CanvasGroup, Image>, IUIKeyboardSupport, IUIChildInteractable<XRSimpleInteractable>
     {
         [SerializeField] private string name; 
         [FoldoutGroup("Container Preferences")][SerializeField] private IUIVisualService<Canvas, SortingGroup, CanvasGroup, Image>.VisualPreferences visualPreference;
@@ -393,8 +394,8 @@ namespace UI
         public IUIKeyboardService KeyboardService { get; set; }
         public IUIPanel SelectedUIPanel { get; }
         public int SelectedIndex { get; }
-        public Action<IUIPanelInteractable<Selectable>> OnSelectedPanel { get; set; }
-        public IInteractableService<Selectable> InteractableService { get; set; } = new UIInteractableService();
+        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnSelectedPanel { get; set; }
+        public IInteractableService<IUIPanelInteractable<XRSimpleInteractable>,XRSimpleInteractable> InteractableService { get; set; } = new UIInteractableService();
         public bool IsInteractable { get; set; }
         public bool AllowChildInteractability { get; set; }
         public void SetInteractable(bool interactable)

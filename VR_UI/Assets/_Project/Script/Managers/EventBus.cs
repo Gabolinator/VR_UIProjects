@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UI.Interface;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -55,6 +56,12 @@ public class EventBus : MonoBehaviour
     public static Action<SelectExitEventArgs, XRRayInteractor> OnSelectExit { get; set; }
     public static Action<HoverEnterEventArgs, XRRayInteractor> OnHoverEnter { get; set; }
     public static Action<HoverExitEventArgs, XRRayInteractor> OnHoverExit { get; set; }
+    
+    public static Action<IUIPanelInteractable<XRSimpleInteractable>> OnPanelSelectEnter { get; set; }
+    public static Action<IUIPanelInteractable<XRSimpleInteractable>> OnPanelSelectExit { get; set; }
+    public static Action<IUIPanelInteractable<XRSimpleInteractable>> OnPanelHoverEnter { get; set; }
+    public static Action<IUIPanelInteractable<XRSimpleInteractable>> OnPanelHoverExit { get; set; }
+    
     
     #endregion
 

@@ -8,12 +8,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
-
+using UnityEngine.XR.Interaction.Toolkit;
 
 
 namespace UI
 {
-    public class UIPanel : MonoBehaviour, IUIPanel, IUIPanelInteractable<Selectable>,
+    public class UIPanel : MonoBehaviour, IUIPanel, IUIPanelInteractable<XRSimpleInteractable>,
         IUIPanelVisibility<Canvas, SortingGroup, CanvasGroup, Image>, IUIPanelBehaviour, IUIKeyboardSupport
     {
         [SerializeField] private string name;
@@ -55,7 +55,7 @@ namespace UI
             set => visualPreference.onHide = value;
         }
 
-       
+        [SerializeField] private XRSimpleInteractable _interactable;
 
         public IUIVisualService<Canvas, SortingGroup, CanvasGroup, Image>.VisualPreferences VisualPreferences { get => visualPreference; set => visualPreference = value; }
         public IUIVisualService<Canvas, SortingGroup, CanvasGroup, Image> VisualService { get; } =
@@ -68,12 +68,14 @@ namespace UI
 
         private readonly IInputFieldService<TMP_InputField>
             _inputFieldService = new UIInputService(); //responsible for handling only the input fields 
-        
 
-        public IInteractableService<Selectable> InteractableService { get; set; } =
+
+        public XRSimpleInteractable Interactable => _interactable;
+
+        public IInteractableService<IUIPanelInteractable<XRSimpleInteractable>,XRSimpleInteractable> InteractableService { get; set; } =
             new UIInteractableService(); //responsible for handling event of interactable ui elements and panel itself
 
-        public bool IsInteractable { get; set; }
+        public bool IsInteractable { get; set; } = true;
 
 
         UIBehaviourPreference IUIPanelBehaviour.BehaviourPreferences
@@ -112,6 +114,24 @@ namespace UI
             VisualService.Initialize(visualPreference);
             _inputFieldService.Initialize(uiKeyboardPreference);
             BehaviourService.Initialize(behaviourPreferences);
+            InteractableService.Initialize(this, Interactable);
+
+            InteractableService.OnHoverEnter += delegate
+            {
+                Debug.Log($"{Name} : on hover enter");
+            };
+            InteractableService.OnHoverExit += delegate
+            {
+                Debug.Log($"{Name} : on hover exit");
+            };
+            InteractableService.OnSelectEnter += delegate
+            {
+                Debug.Log($"{Name} : on select entered");
+            };
+            InteractableService.OnSelectExit += delegate
+            {
+                Debug.Log($"{Name} is select exited");
+            };
             
             var startState = visualPreference.hideOnStart ? Hide(false, -1, null) :  Show(false, -1, null);
 
