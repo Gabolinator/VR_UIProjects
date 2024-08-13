@@ -14,7 +14,13 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 namespace UI
 {
-    public class UIContainer : MonoBehaviour,IUIContainer, IUIPanel, IUIPanelBehaviour, IUIPanelVisibility<Canvas, SortingGroup, CanvasGroup, Image>, IUIKeyboardSupport, IUIChildInteractable<XRSimpleInteractable>
+    public class UIContainer : MonoBehaviour,
+        IUIContainer, 
+        IUIPanel, 
+        IUIPanelBehaviour, 
+        IUIPanelVisibility<Canvas, SortingGroup, CanvasGroup, Image>, 
+        IUIKeyboardSupport, 
+        IUIChildInteractable<XRSimpleInteractable>
     {
         [SerializeField] private string name; 
         [FoldoutGroup("Container Preferences")][SerializeField] private IUIVisualService<Canvas, SortingGroup, CanvasGroup, Image>.VisualPreferences visualPreference;
@@ -39,10 +45,8 @@ namespace UI
         [ShowIf(nameof(overrideUIKeyboardPreference))]
         [FoldoutGroup("Container Preferences")][SerializeField] private IUIKeyboardService.UIKeyboardPreference overridenUIKeyboardPreference;
         
-        
-        public List<UIPanel> panels;
         [SerializeField] private GameObject _uiContainer;
-        public int NumOfPanels => panels?.Count ?? 0;
+        public int NumOfPanels => ChildPanels?.Count ?? 0;
         
         public string Name
         {
@@ -79,9 +83,20 @@ namespace UI
 
         public IUIBehaviourService BehaviourService { get; } = new UIBehaviourService();
 
-        public bool IsClosable => BehaviourService.Behaviour.manipPreference.isClosable;
+        public GameObject SnapVolume => BehaviourService.SnapVolume;
+
+        public bool IsClosable
+        {
+            get => BehaviourService.Behaviour.manipPreference.isClosable;
+            set => BehaviourService.Behaviour.manipPreference.isClosable = value;
+        }
+
         public bool IsDocked => BehaviourService.Behaviour.manipPreference.CurrentlyDocked;
-        public bool IsDockable => BehaviourService.Behaviour.manipPreference.isDockable;
+        public bool IsDockable
+        {
+            get => BehaviourService.Behaviour.manipPreference.isDockable;
+            set => BehaviourService.Behaviour.manipPreference.isDockable = value;
+        }
         
         public IUIContainer Container
         {
@@ -96,39 +111,49 @@ namespace UI
                 BehaviourService.DockIn(value); }
         }
 
+
+        public IUIPanelInteractable<XRSimpleInteractable> SelectedChildPanel { get; }
+        public int SelectedChildIndex { get; }
         
-
-        public List<UIPanel> ChildPanels { get; set; } = new List<UIPanel>();
-
+        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnChildHoverEnter { get; set; }
+        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnChildHoverExit { get; set; }
+        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnChildSelectEnter { get; set; }
+        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnChildSelectExit { get; set; }
+        public List<IUIPanelInteractable<XRSimpleInteractable>> ChildInteractables { get; set; }
+        public List<IUIPanel> ChildPanels { get; set; } = new List<IUIPanel>();
+        
+        
+        
         public UIPanel GetUIPanel(GameObject obj)
         {
             return obj.GetComponent<UIPanel>();
         }
 
-        public List<UIPanel> GetUIPanels()
+        public List<IUIPanel> GetUIPanels()
         {
-            var panels = GetComponentsInChildren<UIPanel>();
-          return panels.ToList();
+            var panels = GetComponentsInChildren<UIPanel>().ToList();
+          var ipanels =  panels.ConvertAll<IUIPanel> (panel => panel);
+          return ipanels;
         }
 
-        public UIPanel GetUIPanelByName(string name)
+        public IUIPanel GetUIPanelByName(string name)
         {
             return ChildPanels
                 .FirstOrDefault(panel => panel.Name == name);
         }
         
-        protected int GetUIPanelIndex(UIPanel panel)
+        protected int GetUIPanelIndex(IUIPanel panel)
         {
             return ChildPanels.FindIndex(p => p == panel);
         }
         
-        protected UIPanel GetUIPanelByIndex(int index)
+        protected IUIPanel GetUIPanelByIndex(int index)
         {
-            if (panels.Count == 0) return null;
-            index = Mathf.Min(index, panels.Count - 1);
+            if (ChildPanels.Count == 0) return null;
+            index = Mathf.Min(index, ChildPanels.Count - 1);
             index = Mathf.Max(0, index);
             
-            return panels[index];
+            return ChildPanels[index];
         }
         
         private bool AnyPanelVisible()
@@ -145,11 +170,32 @@ namespace UI
         {
             VisualService.Initialize(visualPreference);
             BehaviourService.Initialize(behaviourPreference);
+            var panels = _uiContainer ? _uiContainer.GetComponentsInChildren<UIPanel>().ToList() : new List<UIPanel>();
+            ChildPanels = panels.ConvertAll<IUIPanel>(p => p);
+            ChildInteractables = panels.ConvertAll<IUIPanelInteractable<XRSimpleInteractable>>(p=> p);
             
-            panels =  _uiContainer ?_uiContainer.GetComponentsInChildren<UIPanel>().ToList() : new List<UIPanel>();
-            Register(panels);
+            AddInteractListeners();
+            Register(ChildPanels);
             
             OnInitialize();
+        }
+
+        public UniTask TogglePanel(IUIPanel panel, bool state, bool fade, float fadeDuration = -1)
+        {
+            if (panel is not UIPanel uiPanel) return new UniTask(); 
+            return TogglePanel(uiPanel, state, fade, fadeDuration);
+        }
+
+        public UniTask TogglePanel(IUIPanel panel, bool state)
+        {
+               if (panel is not UIPanel uiPanel) return new UniTask(); 
+               return TogglePanel(uiPanel, state);
+        }
+
+        public UniTask TogglePanel(IUIPanel panel, bool state, LerpPreferences preferences)
+        {
+            if (panel is not UIPanel uiPanel) return new UniTask(); 
+            return TogglePanel(uiPanel, state, preferences);
         }
 
 
@@ -281,7 +327,7 @@ namespace UI
         }
 
 
-        public void Register(UIPanel panel)
+        public void Register(IUIPanel panel)
         {
            if(panel == null) return;
 
@@ -289,12 +335,20 @@ namespace UI
            
            ChildPanels.Add(panel);
            OverridePreferences(panel);
-           panel.DockIn(this);
+           if(panel is not IUIPanelBehaviour panelBehaviour) return;
+           panelBehaviour.DockIn(this);
         }
 
-        private void OverridePreferences(UIPanel panel)
+        public void UnRegister(IUIPanel panel)
         {
-            if(panel == null) return;
+            throw new NotImplementedException();
+        }
+
+        private void OverridePreferences(IUIPanel iPanel)
+        {
+            if(iPanel == null) return;
+            if(iPanel is not UIPanel panel) return;
+            
             if (overrideBehaviourPreferences) panel.SetBehaviourPreferences(overridenBehaviourPreferences);
             if (overrideFadePreferences) panel.SetFadePreferences(overridenFadeInPreferences, overridenFadeOutPreferences );
             if (overrideUIKeyboardPreference) panel.SetUIKeyboardPreferences(overridenUIKeyboardPreference);
@@ -335,12 +389,17 @@ namespace UI
             manager.UnRegister(this);
         }
 
-        public void Register(List<UIPanel> panels)
+        public void Register(List<IUIPanel> panels)
         {
             foreach (var panel in panels)
             {
                Register(panel);
             }
+        }
+
+        public void UnRegister(List<IUIPanel> panels)
+        {
+            throw new NotImplementedException();
         }
 
         public void UnRegister(List<UIPanel> panels)
@@ -392,15 +451,61 @@ namespace UI
 
         public IUIKeyboardService.UIKeyboardPreference UIKeyboardPreferences { get; set; }
         public IUIKeyboardService KeyboardService { get; set; }
-        public IUIPanel SelectedUIPanel { get; }
-        public int SelectedIndex { get; }
-        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnSelectedPanel { get; set; }
-        public IInteractableService<IUIPanelInteractable<XRSimpleInteractable>,XRSimpleInteractable> InteractableService { get; set; } = new UIInteractableService();
-        public bool IsInteractable { get; set; }
+        //public IUIPanel SelectedUIPanel { get; }
+        //public int SelectedIndex { get; }
+        //public Action<IUIPanelInteractable<XRSimpleInteractable>> OnSelectedPanel { get; set; }
+        //public IInteractableService<IUIPanelInteractable<XRSimpleInteractable>,XRSimpleInteractable> InteractableService { get; set; } = new UIInteractableService();
+        //public bool IsInteractable { get; set; }
         public bool AllowChildInteractability { get; set; }
-        public void SetInteractable(bool interactable)
+
+        public void SetInteractable(IUIPanelInteractable<XRSimpleInteractable> childPanel, bool interactable)
+        {
+            if(childPanel == null) return;
+            childPanel.SetInteractable(interactable);
+        }
+
+        public void AddInteractListeners() => AddInteractListeners(
+            ChildInteractables, OnChildSelectEnter,
+            OnChildSelectExit, OnChildHoverEnter, OnChildHoverExit);
+        
+        
+
+        public void RemoveInteractListeners()
         {
             throw new NotImplementedException();
+        }
+        
+
+        public void AddInteractListeners(List<IUIPanelInteractable<XRSimpleInteractable>> childPanels, 
+            Action<IUIPanelInteractable<XRSimpleInteractable>> onSelectEnter,
+            Action<IUIPanelInteractable<XRSimpleInteractable>> onSelectExit,
+            Action<IUIPanelInteractable<XRSimpleInteractable>> onHoverEnter,
+            Action<IUIPanelInteractable<XRSimpleInteractable>> onHoverExit)
+        {
+            if(childPanels.Count == 0) return;
+            
+            foreach (var panel in childPanels)
+            {
+                if(panel is not IUIPanelInteractable<XRSimpleInteractable> interactable) continue;
+                interactable.OnHoverEnter += onHoverEnter;
+                interactable.OnHoverExit += onHoverExit;
+                interactable.OnSelectEnter += onSelectEnter;
+                interactable.OnSelectExit += onSelectExit;
+            }
+        }
+
+        public void RemoveInteractListeners(List<IUIPanelInteractable<XRSimpleInteractable>> childPanels, Action<IUIPanelInteractable<XRSimpleInteractable>> onSelectEnter, Action<IUIPanelInteractable<XRSimpleInteractable>> onSelectExit, Action<IUIPanelInteractable<XRSimpleInteractable>> onHoverEnter,
+            Action<IUIPanelInteractable<XRSimpleInteractable>> onHoverExit)
+        {
+            if(childPanels.Count == 0) return;
+            foreach (var panel in childPanels)
+            {
+                if(panel is not IUIPanelInteractable<XRSimpleInteractable> interactable) continue;
+                interactable.OnHoverEnter -= onHoverEnter;
+                interactable.OnHoverExit -= onHoverExit;
+                interactable.OnSelectEnter -= onSelectEnter;
+                interactable.OnSelectExit -= onSelectExit;
+            }
         }
     }
 

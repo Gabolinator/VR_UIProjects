@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UI.Interface;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 namespace UI
 {
@@ -44,8 +45,14 @@ namespace UI
         {
             LayoutService.OnFinishLayout += OnChangeCurrentIndex;
             LayoutService.OnLayoutUpdate += LayoutUpdated; 
-            LayoutService.Initialize(_layoutPreferences, panels.ConvertAll<IUIPanel>(panel => panel));
+            LayoutService.Initialize(_layoutPreferences, ChildPanels.ConvertAll<IUIPanel>(panel => panel));
             LayoutUpdated(0f, SelectedIndex);
+            OnChildSelectExit += SelectPanel;
+        }
+
+        private void SelectPanel(IUIPanelInteractable<XRSimpleInteractable> obj)
+        {
+           Debug.Log($"Selected {obj.Panel.Name}");
         }
 
         private void LayoutUpdated(float angle, int index)
@@ -75,10 +82,10 @@ namespace UI
             for (int i = 0; i < NumOfPanels; i++)
             {
                 var panel = GetUIPanelByIndex(i);
-                if(!panel) continue;
+                if(panel == null) continue;
                 bool interactable = interactableIndex.Contains(i) && panel.Visible;
                 
-                panel.SetInteractable(interactable);
+                if(panel is UIPanel uiPanel) uiPanel.SetInteractable(interactable);
             }
             
         }
@@ -101,12 +108,12 @@ namespace UI
             for (int i = 0; i < NumOfPanels; i++)
             {
                 var panel = GetUIPanelByIndex(i);
-                if(!panel) continue;
+                if(panel == null) continue;
                 float alpha = otherAlpha;
 
                 if (indexToShow.Contains(i)) alpha = i == centralIndex ? centralAlpha : neighbouringAlpha;
                 
-                panel.SetAlpha(alpha,true, .2f);
+                if(panel is UIPanel uiPanel) uiPanel.SetAlpha(alpha,true, .2f);
             
             }
             
@@ -132,11 +139,11 @@ namespace UI
         }
 
 
-        public void CloseCurrentPanel() => ClosePanel(GetUIPanelByIndex(SelectedIndex));
+        public void CloseCurrentPanel() => ClosePanel(GetUIPanelByIndex(SelectedIndex) as UIPanel);
 
         protected override void OnClosePanel()
         {
-            LayoutService.Initialize(_layoutPreferences, panels.ConvertAll<IUIPanel>(panel => panel));
+            LayoutService.Initialize(_layoutPreferences, ChildPanels.ConvertAll<IUIPanel>(panel => panel));
         }
         }
 

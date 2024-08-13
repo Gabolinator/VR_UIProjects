@@ -1,19 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 using UI.Interface;
 
 namespace UI
 {
     public interface IUIChildInteractable<TInteractable>
     {
-        public IUIPanel SelectedUIPanel { get; }
-        public int SelectedIndex { get; }
+       
+        public IUIPanelInteractable<TInteractable> SelectedChildPanel { get; }
+        public int SelectedChildIndex { get; }
+        public Action<IUIPanelInteractable<TInteractable>> OnChildHoverEnter { get; set; }
+        public Action<IUIPanelInteractable<TInteractable>> OnChildHoverExit { get; set; }
+        public Action<IUIPanelInteractable<TInteractable>> OnChildSelectEnter { get; set; }
+        public Action<IUIPanelInteractable<TInteractable>> OnChildSelectExit { get; set; }
 
-        public Action<IUIPanelInteractable<TInteractable>> OnSelectedPanel { get; set; }
-        public IInteractableService<IUIPanelInteractable<TInteractable>,TInteractable> InteractableService { get; set; }
-        bool IsInteractable { get; set; }
-        bool AllowChildInteractability { get; set; }
-        public void SetInteractable(bool interactable);
+        public List<IUIPanelInteractable<TInteractable>> ChildInteractables { get; set; }
+        public bool AllowChildInteractability { get; set; }
+        public void SetInteractable(IUIPanelInteractable<TInteractable> childPanel, bool interactable);
         
+        public void AddInteractListeners();
+
+        public void RemoveInteractListeners();
         
+        public void AddInteractListeners(List<IUIPanelInteractable<TInteractable>> childPanels,
+            Action<IUIPanelInteractable<TInteractable>> onSelectEnter,
+            Action<IUIPanelInteractable<TInteractable>> onSelectExit,
+            Action<IUIPanelInteractable<TInteractable>> onHoverEnter,
+            Action<IUIPanelInteractable<TInteractable>> onHoverExit);
+
+        public void RemoveInteractListeners(List<IUIPanelInteractable<TInteractable>> childPanels,
+            Action<IUIPanelInteractable<TInteractable>> onSelectEnter,
+            Action<IUIPanelInteractable<TInteractable>> onSelectExit,
+            Action<IUIPanelInteractable<TInteractable>> onHoverEnter,
+            Action<IUIPanelInteractable<TInteractable>> onHoverExit);
     }
 }

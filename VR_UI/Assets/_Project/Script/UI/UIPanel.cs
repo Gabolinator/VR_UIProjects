@@ -13,8 +13,12 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 namespace UI
 {
-    public class UIPanel : MonoBehaviour, IUIPanel, IUIPanelInteractable<XRSimpleInteractable>,
-        IUIPanelVisibility<Canvas, SortingGroup, CanvasGroup, Image>, IUIPanelBehaviour, IUIKeyboardSupport
+    public class UIPanel : MonoBehaviour, 
+        IUIPanel, 
+        IUIPanelInteractable<XRSimpleInteractable>,
+        IUIPanelVisibility<Canvas, SortingGroup, CanvasGroup, Image>, 
+        IUIPanelBehaviour, 
+        IUIKeyboardSupport
     {
         [SerializeField] private string name;
 
@@ -69,6 +73,25 @@ namespace UI
         private readonly IInputFieldService<TMP_InputField>
             _inputFieldService = new UIInputService(); //responsible for handling only the input fields 
 
+        public IUIPanel Panel => this;
+        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnHoverEnter
+        {
+            get => InteractableService.OnHoverEnter;
+            set => InteractableService.OnHoverEnter = value;
+        }
+
+        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnHoverExit   {
+            get => InteractableService.OnHoverExit;
+            set => InteractableService.OnHoverExit = value;
+        }
+        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnSelectEnter    {
+            get => InteractableService.OnSelectEnter;
+            set => InteractableService.OnSelectEnter = value;
+        }
+        public Action<IUIPanelInteractable<XRSimpleInteractable>> OnSelectExit    {
+            get => InteractableService.OnSelectExit;
+            set => InteractableService.OnSelectExit = value;
+        }
 
         public XRSimpleInteractable Interactable => _interactable;
 
@@ -85,9 +108,19 @@ namespace UI
         }
 
         public IUIBehaviourService BehaviourService { get; } = new UIBehaviourService();
-        public bool IsClosable => BehaviourService.Behaviour.manipPreference.isClosable;
+        public GameObject SnapVolume => BehaviourService.SnapVolume;
+        public bool IsClosable
+        {
+            get => BehaviourService.Behaviour.manipPreference.isClosable;
+            set => BehaviourService.Behaviour.manipPreference.isClosable = value;
+        }
+
         public bool IsDocked => BehaviourService.Behaviour.manipPreference.CurrentlyDocked;
-        public bool IsDockable => BehaviourService.Behaviour.manipPreference.isDockable;
+        public bool IsDockable
+        {
+            get => BehaviourService.Behaviour.manipPreference.isDockable;
+            set => BehaviourService.Behaviour.manipPreference.isDockable = value;
+        }
         
         private UIManager Manager => UIManager.Instance;
         
@@ -188,6 +221,7 @@ namespace UI
             if (fade) VisualService.LerpFade(alpha, duration);
             else VisualService.FadeNow(alpha);
         }
+        
         
         public void DockIn(IUIContainer container) => Container = container;
         
