@@ -149,22 +149,22 @@ namespace UI
             BehaviourService.Initialize(behaviourPreferences);
             InteractableService.Initialize(this, Interactable);
 
-            InteractableService.OnHoverEnter += delegate
-            {
-                Debug.Log($"{Name} : on hover enter");
-            };
-            InteractableService.OnHoverExit += delegate
-            {
-                Debug.Log($"{Name} : on hover exit");
-            };
-            InteractableService.OnSelectEnter += delegate
-            {
-                Debug.Log($"{Name} : on select entered");
-            };
-            InteractableService.OnSelectExit += delegate
-            {
-                Debug.Log($"{Name} is select exited");
-            };
+            // InteractableService.OnHoverEnter += delegate
+            // {
+            //     Debug.Log($"{Name} : on hover enter");
+            // };
+            // InteractableService.OnHoverExit += delegate
+            // {
+            //     Debug.Log($"{Name} : on hover exit");
+            // };
+            // InteractableService.OnSelectEnter += delegate
+            // {
+            //     Debug.Log($"{Name} : on select entered");
+            // };
+            // InteractableService.OnSelectExit += delegate
+            // {
+            //     Debug.Log($"{Name} is select exited");
+            // };
             
             var startState = visualPreference.hideOnStart ? Hide(false, -1, null) :  Show(false, -1, null);
 

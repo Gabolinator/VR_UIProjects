@@ -173,11 +173,37 @@ namespace UI
             var panels = _uiContainer ? _uiContainer.GetComponentsInChildren<UIPanel>().ToList() : new List<UIPanel>();
             ChildPanels = panels.ConvertAll<IUIPanel>(p => p);
             ChildInteractables = panels.ConvertAll<IUIPanelInteractable<XRSimpleInteractable>>(p=> p);
-            
+      
             AddInteractListeners();
             Register(ChildPanels);
             
             OnInitialize();
+        }
+
+        protected virtual void ChildSelectExit(IUIPanelInteractable<XRSimpleInteractable> obj)
+        {
+          //  Debug.Log($"{Name} : child on select exited");
+            OnChildSelectExit?.Invoke(obj);
+        }
+
+        protected virtual void ChildHoverExit(IUIPanelInteractable<XRSimpleInteractable> obj)
+        {
+           // Debug.Log($"{Name} : child on  hover exit");
+            OnChildHoverExit?.Invoke(obj);
+        }
+
+        protected virtual void ChildSelectEnter(IUIPanelInteractable<XRSimpleInteractable> obj)
+        {
+         //   Debug.Log($"{Name} : child on select entered");
+            OnChildSelectEnter?.Invoke(obj);
+        }
+   
+        
+        protected virtual void ChildHoverEnter(IUIPanelInteractable<XRSimpleInteractable> obj)
+        {
+            
+          //  Debug.Log($"{Name} : child on hover enter");
+            OnChildHoverEnter?.Invoke(obj);
         }
 
         public UniTask TogglePanel(IUIPanel panel, bool state, bool fade, float fadeDuration = -1)
@@ -423,6 +449,7 @@ namespace UI
 
         protected virtual void OnInitialize()
         {
+            
         }
 
         protected virtual void OnAwake()
@@ -464,9 +491,9 @@ namespace UI
             childPanel.SetInteractable(interactable);
         }
 
-        public void AddInteractListeners() => AddInteractListeners(
-            ChildInteractables, OnChildSelectEnter,
-            OnChildSelectExit, OnChildHoverEnter, OnChildHoverExit);
+        public void AddInteractListeners() 
+            => AddInteractListeners(ChildInteractables, ChildSelectEnter, 
+                ChildSelectExit, ChildHoverEnter, ChildHoverExit);
         
         
 

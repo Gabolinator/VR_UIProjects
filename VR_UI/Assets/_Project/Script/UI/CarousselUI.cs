@@ -52,7 +52,14 @@ namespace UI
 
         private void SelectPanel(IUIPanelInteractable<XRSimpleInteractable> obj)
         {
-           Debug.Log($"Selected {obj.Panel.Name}");
+           Debug.Log($"{Name} - Selected {obj.Panel.Name}");
+           if (obj is not IUIPanel panel)
+           {
+               Debug.Log($"Selected {obj.Panel.Name} is not a IUIPanel ");
+               return;
+           }
+           
+           ToPanel(panel);
         }
 
         private void LayoutUpdated(float angle, int index)
@@ -131,7 +138,7 @@ namespace UI
         public void ToNextPanel() => LayoutService.Layout(NextIndex);
         public void ToPreviousPanel() => LayoutService.Layout(PreviousIndex);
         public void ToPanel(int index) => LayoutService.Layout(index);
-        public void ToPanel(UIPanel panel) => ToPanel(GetUIPanelIndex(panel));
+        public void ToPanel(IUIPanel panel) => ToPanel(GetUIPanelIndex(panel));
 
         
         public void OnChangeCurrentIndex(int index){

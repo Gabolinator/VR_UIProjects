@@ -37109,7 +37109,7 @@ MonoBehaviour:
   _neighbouringPanelAlpha: 0.4
   _otherPanelAlpha: 0.1
   _adjustNeighbouringPanelAlphaIndex: 1
-  _adjustNeighbouringPanelInteractableIndex: 0
+  _adjustNeighbouringPanelInteractableIndex: 1
 --- !u!114 &6725908652240311399
 MonoBehaviour:
   m_ObjectHideFlags: 0
