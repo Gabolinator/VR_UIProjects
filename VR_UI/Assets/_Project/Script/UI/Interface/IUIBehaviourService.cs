@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
-
-    
-    
 
     /// <summary>
     /// Container struct for movement-specific behaviour parameters.

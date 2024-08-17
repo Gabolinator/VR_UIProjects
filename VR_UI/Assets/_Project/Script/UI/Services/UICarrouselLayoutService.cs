@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Project.Script.UI.Interface;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace UI.Interface
+namespace _Project.Script.UI.Services
 {
-
+    public enum RotationDirection
+    {
+        Clockwise,
+        Counterclockwise
+    }
     public enum Axis
     {
         Up,
@@ -22,6 +26,7 @@ namespace UI.Interface
         public float startOffset; //add an offset to the circle 
         public float radius = 1; //radius of carrousel
         public Axis axis = Axis.Side; //avis around with the caroussel will be layed out
+        [ReadOnly] public RotationDirection direction = RotationDirection.Counterclockwise;
         [ReadOnly] public float destinationAngle;
         [ReadOnly] public float currentAngle;
     }
@@ -105,7 +110,8 @@ namespace UI.Interface
 
             carrouselPrefs.currentAngle = carrouselPrefs.destinationAngle;
             
-            int wrappedIndex = (carrouselPrefs.frontIndex + PanelCount) % PanelCount;
+            
+            int wrappedIndex = ((carrouselPrefs.frontIndex % PanelCount) + PanelCount) % PanelCount;
             CurrentIndex = wrappedIndex;
             CentralUIPanel = carrouselPrefs.Panels[CurrentIndex];
             
@@ -152,8 +158,12 @@ namespace UI.Interface
             Preferences.Panels = panels;
             
             _anglesPerPanel = 360f / PanelCount;
-            _startOffset = -360f / (PanelCount - 1) - carrouselPrefs.startOffset;
-            
+
+            _startOffset = -90;
+           
+           //_startOffset = PanelCount % 2 ==0? -3* _anglesPerPanel/2 :-360f / (PanelCount - 1);
+           _startOffset -= carrouselPrefs.startOffset;
+           
             carrouselPrefs.destinationAngle =GetIndexAngle(carrouselPrefs.frontIndex);
 
             OnStartLayout += delegate { carrouselPrefs.events.onStartLayout?.Invoke();  };
@@ -192,7 +202,39 @@ namespace UI.Interface
             
             float elapsedTime = 0;
             float currentAngle = carrouselPrefs.currentAngle;
+            currentAngle %= 360;
+            
             float destination = carrouselPrefs.destinationAngle;
+            
+            //to make sure the rotation still happens in the same 'direction'
+            float diff = destination - currentAngle;
+            var direction = carrouselPrefs.direction;
+
+            if (diff < 0)
+                direction = direction == RotationDirection.Clockwise
+                    ? RotationDirection.Counterclockwise
+                    : RotationDirection.Clockwise;
+            
+            //to make sure the rotation still happens in the same 'direction'  - adjust the destination angle 
+            if (Mathf.Abs(diff) > 180)
+            {
+             
+                direction = direction == RotationDirection.Clockwise ? RotationDirection.Clockwise : RotationDirection.Counterclockwise;
+                
+                if (direction == RotationDirection.Clockwise)
+                {
+                    if (diff < 0)
+                        diff += 360; 
+                }
+                else 
+                {
+                    if (diff > 0)
+                        diff -= 360; 
+                }
+            }
+            
+            destination = currentAngle + diff; // Update the destination angle based on the direction
+            
             while (elapsedTime < duration)
             {
                 float t = elapsedTime / duration;
@@ -265,16 +307,7 @@ namespace UI.Interface
 
             // Apply the calculated offset to the panel's position
             panelGo.transform.localPosition = offset;
-
-        
-            // // Optionally apply spread if it's a factor (spreading could mean additional offset or scale adjustments)
-            // if (spread > 0)
-            // {
-            //     // Here, you might adjust the scale or further modify the position based on the spread.
-            //     // For example:
-            //     Vector3 spreadOffset = offset.normalized * spread;
-            //     panelGo.transform.localPosition += spreadOffset;
-            // }
+            
         }
         
     }

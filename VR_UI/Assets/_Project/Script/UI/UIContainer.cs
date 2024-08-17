@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using _Project.Script.Managers;
+using _Project.Script.UI.Interface;
+using _Project.Script.UI.Services;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
-using UI.Interface;
+using UI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
@@ -12,7 +14,7 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace UI
+namespace _Project.Script.UI
 {
     public class UIContainer : MonoBehaviour,
         IUIContainer, 

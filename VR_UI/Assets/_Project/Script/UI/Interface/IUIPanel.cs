@@ -2,9 +2,8 @@
 using _Project.Script.Managers;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
     /// <summary>
     /// Interface representing a UI panel that can be managed and interacted with within a UI system.

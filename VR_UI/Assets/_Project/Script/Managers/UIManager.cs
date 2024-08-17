@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UI.Interface;
+using _Project.Script.UI.Interface;
 using UnityEngine;
 using Utils;
 

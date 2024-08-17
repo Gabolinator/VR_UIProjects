@@ -2,7 +2,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine.Events;
 
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
     public interface IUIPanelVisibility<TCanvas, TSortingGroup, TCanvasGroup, TImage>
     {

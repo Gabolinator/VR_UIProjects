@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
-
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
 
     [Serializable]

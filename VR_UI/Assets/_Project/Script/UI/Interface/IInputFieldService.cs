@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
     public interface IInputFieldService<TInputField>
     {

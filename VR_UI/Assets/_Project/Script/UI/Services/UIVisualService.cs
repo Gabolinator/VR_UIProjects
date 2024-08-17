@@ -1,16 +1,13 @@
-﻿
-
-using System;
+﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
+using _Project.Script.UI.Interface;
 using Cysharp.Threading.Tasks;
-using UI.Interface;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
-namespace UI
+namespace _Project.Script.UI.Services
 {
     public class UIVisualService : IUIVisualService<Canvas, SortingGroup, CanvasGroup, Image >
     {

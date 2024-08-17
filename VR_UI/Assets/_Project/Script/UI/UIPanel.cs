@@ -1,9 +1,11 @@
 ﻿using System;
 using _Project.Script.Managers;
+using _Project.Script.UI;
+using _Project.Script.UI.Interface;
+using _Project.Script.UI.Services;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using TMPro;
-using UI.Interface;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using UI.Interface;
+using _Project.Script.UI.Interface;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace UI
+namespace _Project.Script.UI.Services
 {
     public class UIInteractableService : IInteractableService<IUIPanelInteractable<XRSimpleInteractable>, XRSimpleInteractable>
     {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using UI.Interface;
 
-namespace UI
+namespace _Project.Script.UI.Interface
 {
     public interface IUIChildInteractable<TInteractable>
     {

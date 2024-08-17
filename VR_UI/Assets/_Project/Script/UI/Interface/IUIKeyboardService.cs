@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
     public interface IUIKeyboardService
     {

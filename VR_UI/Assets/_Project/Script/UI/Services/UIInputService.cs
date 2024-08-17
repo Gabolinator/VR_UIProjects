@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Project.Script.UI.Interface;
 using TMPro;
-using UI.Interface;
 using UnityEngine;
 
-namespace UI
+namespace _Project.Script.UI.Services
 {
     public class UIInputService : IInputFieldService<TMP_InputField>
     {

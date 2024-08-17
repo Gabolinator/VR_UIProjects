@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace UI
+namespace _Project.Script.UI.Helpers
 {
     public class InteractableHelper : MonoBehaviour, IXRHoverInteractable, IXRSelectInteractable
     {

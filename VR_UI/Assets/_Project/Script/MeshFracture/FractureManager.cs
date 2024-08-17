@@ -77,21 +77,18 @@ public class FractureManager
         {
             object instance = Activator.CreateInstance(fractureType);
 
-            if (instance is IFractureGenerator)
+            if (instance is IFractureGenerator generator)
             {
-                return (IFractureGenerator)instance;
+                return generator;
             }
-            else
-            {
-                Debug.LogError("[FractureManager] The instantiated object does not implement IFractureGenerator.");
-                return null;
-            }
-        }
-        else
-        {
-            Debug.LogError("[FractureManager] FractureLogic is null.");
+            
+            Debug.LogError("[FractureManager] The instantiated object does not implement IFractureGenerator.");
             return null;
         }
+      
+        Debug.LogError("[FractureManager] FractureLogic is null.");
+        return null;
+        
     }
     
     

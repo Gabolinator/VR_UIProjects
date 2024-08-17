@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using UnityEngine.XR.Interaction.Toolkit;
 
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
     public interface IInteractableService<TInteractable, TInteractableComponent>
     {

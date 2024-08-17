@@ -1,4 +1,6 @@
-﻿namespace UI.Interface
+﻿using _Project.Script.UI.Interface;
+
+namespace _Project.Script.UI.Services
 {
     public class UIKeyboardService : IUIKeyboardService
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
     /// <summary>
     /// Interface representing the behavior of a UI panel, including docking, closing, and interaction preferences.

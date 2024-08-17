@@ -2,12 +2,10 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
-using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 
-
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
 
     

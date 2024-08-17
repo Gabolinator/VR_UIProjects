@@ -1,9 +1,8 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using _Project.Script.UI.Interface;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.InputSystem.OnScreen;
 
-
-namespace UI.Interface
+namespace _Project.Script.UI.Services
 {
     public class UIBehaviourService : IUIBehaviourService
     {

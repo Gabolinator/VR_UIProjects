@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using _Project.Script.StateManagement;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
-namespace UI.Interface
+namespace _Project.Script.UI.Interface
 {
         /// <summary>
         /// Interface representing a UI container that can hold and manage multiple UI panels.

@@ -1,9 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.UI;
 
-namespace UI
+namespace _Project.Script.UI.Helpers
 {
     [RequireComponent(typeof(XRRayInteractor))]
     public class InteractorHelper : MonoBehaviour

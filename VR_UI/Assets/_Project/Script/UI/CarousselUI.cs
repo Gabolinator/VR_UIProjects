@@ -1,11 +1,12 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using UI.Interface;
+using _Project.Script.UI.Interface;
+using _Project.Script.UI.Services;
+using UI;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace UI
+namespace _Project.Script.UI
 {
     public class CarousselUI : UIContainer, IUIContainerLayout
     {
